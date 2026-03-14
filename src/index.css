@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=Outfit:wght@800;900&display=swap');
+
+:root {
+  --bg-dark: #111111;
+  --bg-light: #F4EFE6;
+  --text-light: #F8FAFC;
+  --text-dim: #D1D5DB;
+  --text-dark: #111111;
+  
+  /* Sticker Colors */
+  --color-cyan: #7CE0D3;
+  --color-yellow: #FFD200;
+  --color-orange: #FF8A00;
+  --color-pink: #FF3366;
+  --color-mint: #7CE0D3; /* looks same as cyan but slightly greener? Let's use #87E1C7 */
+  --color-mint-better: #8AE2C3;
+  --color-green: #A3E635;
+  
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Anton', 'Impact', sans-serif;
+  --font-display-curve: 'Outfit', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
