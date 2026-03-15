@@ -166,33 +166,29 @@ function ProjectDetail() {
       </header>
 
       {/* Hero Section */}
-      <main className="project-hero" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100vh', width: '100%', position: 'relative', marginTop: '-120px', paddingLeft: '4rem', paddingBottom: '4rem' }}>
+      <main className="project-hero">
 
-        {/* Device Anchored Right */}
-        <div style={{ position: 'absolute', right: project.mockupType === 'laptop' ? '2rem' : '4rem', top: project.mockupType === 'laptop' ? '12vh' : '5vh', zIndex: 1, bottom: 0, display: 'flex', alignItems: 'flex-start' }}>
+        {/* Device Container */}
+        <div className={`project-device-container ${project.mockupType}`}>
           <DeviceShowcase type={project.mockupType} slides={project.slides} theme={project.bgColor === '#111111' ? 'light' : 'dark'} />
         </div>
 
-        {/* Text Anchored Bottom Left */}
-        <div style={{ position: 'relative', zIndex: 10, maxWidth: project.mockupType === 'laptop' ? '28vw' : '50%', marginBottom: '4vh' }}>
-          <h1 className="hero-title" style={{ fontSize: 'clamp(3rem, 6vw, 12rem)', color: project.fontColor, lineHeight: '0.85', margin: 0, letterSpacing: '-2px', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+        {/* Text Container */}
+        <div className={`project-text-container ${project.mockupType}`}>
+          <h1 className="project-title" style={{ color: project.fontColor }}>
             {project.title.toUpperCase()}
           </h1>
           {/* Compressed Subtitle Text */}
-          <div className="hero-subtitle" style={{ opacity: 0.8, display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '2rem', maxWidth: project.mockupType === 'laptop' ? '320px' : '380px' }}>
-            <p className="subtitle-desc" style={{ color: project.fontColor, fontSize: '1.2rem', fontWeight: '500', margin: 0, lineHeight: '1.4' }}>
+          <div className="hero-subtitle project-subtitle-container">
+            <p className="subtitle-desc project-subtitle" style={{ color: project.fontColor }}>
               {project.subtitle}
             </p>
-            <div className="tech-stack-pills" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginTop: '0.5rem' }}>
+            <div className="tech-stack-pills">
               {project.techStack.map((tech, idx) => (
                 <span key={idx} className="tech-pill" style={{
                   color: project.fontColor,
                   border: `1px solid ${project.fontColor === '#111111' ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.15)'}`,
                   backgroundColor: project.fontColor === '#111111' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)',
-                  padding: '0.35rem 0.9rem',
-                  borderRadius: '30px',
-                  fontSize: '0.85rem',
-                  fontWeight: '600'
                 }}>
                   {tech}
                 </span>

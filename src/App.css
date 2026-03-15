@@ -175,7 +175,7 @@
   align-items: center;
   justify-content: center;
   color: #111;
-  transition: 
+  transition:
     transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
     background-color 0.4s ease,
     border-color 0.4s ease,
@@ -756,7 +756,7 @@
 
   .dark-section,
   .section {
-    padding: 1.5rem;
+    padding: 6rem 1.5rem;
   }
 
   .nav-links {
@@ -764,11 +764,48 @@
   }
 
   .graphic-section {
-    height: 600px;
+    height: auto;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: 3rem;
+  }
+
+  .intro-text-container {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    align-items: center;
+    text-align: center;
+    padding: 0 1rem;
+    z-index: 15;
+  }
+
+  .intro-name {
+    font-size: 14vw;
+    white-space: normal;
+    letter-spacing: -1px;
+  }
+
+  .intro-title {
+    font-size: 1.25rem;
+  }
+
+  .intro-socials {
+    justify-content: center;
+    margin-top: 1.5rem;
   }
 
   .portrait-container {
-    width: 300px;
+    position: relative;
+    width: 85%;
+    max-width: 320px;
+    left: auto;
+    bottom: auto;
+    margin: 0 auto;
+    margin-top: 2rem;
   }
 
   .blog-item {
@@ -973,4 +1010,161 @@
 .dot.active {
   background: rgba(255, 255, 255, 1);
   transform: scale(1.2);
+}
+
+/* --- Project Detail Mobile Fixes --- */
+.project-hero {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  min-height: 900px; /* Prevents 800px mockup from bleeding on short windows */
+  width: 100%;
+  position: relative;
+  margin-top: -120px;
+  padding-left: 4rem;
+  padding-bottom: 4rem;
+  align-items: flex-end;
+}
+
+.project-device-container {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+.project-device-container.laptop {
+  right: 2rem;
+  top: 12vh;
+}
+
+.project-device-container.iphone {
+  right: 4rem;
+  top: 5vh;
+}
+
+.project-text-container {
+  position: relative;
+  z-index: 10;
+  margin-bottom: 4vh;
+}
+
+.project-text-container.laptop {
+  max-width: 28vw;
+}
+
+.project-text-container.iphone {
+  max-width: 50%;
+}
+
+.project-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6vw, 12rem);
+  line-height: 0.85;
+  margin: 0;
+  letter-spacing: -2px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.project-subtitle-container {
+  opacity: 0.8;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.project-text-container.laptop .project-subtitle-container {
+  max-width: 320px;
+}
+
+.project-text-container.iphone .project-subtitle-container {
+  max-width: 380px;
+}
+
+.project-subtitle {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.tech-stack-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.tech-pill {
+  padding: 0.35rem 0.9rem;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .project-hero {
+    flex-direction: column !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    padding-bottom: 2rem !important;
+    text-align: center;
+    align-items: center;
+    height: auto;
+    min-height: 100vh;
+    padding-top: 150px;
+  }
+
+  /* Make device relative on mobile so it doesn't overlap text */
+  .project-device-container {
+    position: relative !important;
+    right: auto !important;
+    top: auto !important;
+    margin-bottom: 3rem;
+  }
+
+  .project-device-container.laptop,
+  .project-device-container.iphone {
+    right: auto;
+    top: auto;
+  }
+
+  .project-text-container {
+    max-width: 100% !important;
+  }
+
+  .project-text-container .project-subtitle-container {
+    max-width: 100% !important;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .tech-stack-pills {
+    justify-content: center;
+  }
+
+  /* Scale down mockup for mobile screens */
+  .iphone-mockup {
+    width: 280px;
+    height: 560px;
+    border-width: 12px;
+    border-radius: 35px;
+  }
+  
+  .dynamic-island {
+    width: 90px;
+    height: 25px;
+    top: 10px;
+  }
+  
+  .laptop-mockup {
+    width: 90vw;
+    max-width: 90vw;
+  }
+  .laptop-screen {
+    border-width: 12px;
+  }
 }
