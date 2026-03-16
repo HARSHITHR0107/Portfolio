@@ -66,66 +66,77 @@ const DeviceShowcase = ({ type, slides, theme = 'dark' }) => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 3000);
+    }, 4000);
     return () => clearInterval(timer);
   }, [slides.length]);
 
+  const handlePrev = () => {
+    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  };
+  const handleNext = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+
   const mockupClass = `mockup-container ${theme === 'light' ? 'mockup-light' : 'mockup-dark'}`;
+
+  const renderSlides = () => (
+    <div 
+      className="slides-wrapper"
+      style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+    >
+      {slides.map((slide, idx) => (
+        <div
+          key={idx}
+          className="slide-content"
+          style={{ backgroundColor: slide.bg }}
+        >
+          {slide.text}
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className={mockupClass}>
-      {type === 'laptop' ? (
-        <div className="laptop-mockup">
-          <div className="laptop-screen">
-            <div className="laptop-notch"></div>
+      <div className="device-wrapper">
+        {type === 'laptop' ? (
+          <div className="laptop-mockup">
+            <div className="laptop-screen">
+              <div className="laptop-notch"></div>
+              <div className="mockup-slideshow">
+                {renderSlides()}
+              </div>
+            </div>
+            <div className="laptop-base"></div>
+          </div>
+        ) : (
+          <div className="iphone-mockup">
+            <div className="dynamic-island"></div>
             <div className="mockup-slideshow">
-              {slides.map((slide, idx) => (
-                <div
-                  key={idx}
-                  className={`slide-content ${idx === currentSlide ? 'active' : ''}`}
-                  style={{ backgroundColor: slide.bg }}
-                >
-                  {slide.text}
-                </div>
-              ))}
-              <div className="mockup-controls">
-                {slides.map((_, idx) => (
-                  <div
-                    key={idx}
-                    className={`dot ${idx === currentSlide ? 'active' : ''}`}
-                    onClick={() => setCurrentSlide(idx)}
-                  ></div>
-                ))}
-              </div>
+              {renderSlides()}
             </div>
           </div>
-          <div className="laptop-base"></div>
+        )}
+      </div>
+
+      <div className="keyboard-controls">
+        <div className="key-row">
+          <button className="mech-key" onClick={handlePrev} title="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          </button>
         </div>
-      ) : (
-        <div className="iphone-mockup">
-          <div className="dynamic-island"></div>
-          <div className="mockup-slideshow">
-            {slides.map((slide, idx) => (
-              <div
-                key={idx}
-                className={`slide-content ${idx === currentSlide ? 'active' : ''}`}
-                style={{ backgroundColor: slide.bg }}
-              >
-                {slide.text}
-              </div>
-            ))}
-            <div className="mockup-controls">
-              {slides.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`dot ${idx === currentSlide ? 'active' : ''}`}
-                  onClick={() => setCurrentSlide(idx)}
-                ></div>
-              ))}
-            </div>
-          </div>
+        <div className="key-row">
+          <button className="mech-key" onClick={handlePrev} title="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <button className="mech-key" onClick={handleNext} title="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+          </button>
+          <button className="mech-key" onClick={handleNext} title="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
         </div>
-      )}
+      </div>
     </div>
   );
 };
