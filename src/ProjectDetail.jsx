@@ -62,18 +62,52 @@ const projectData = {
 };
 const DeviceShowcase = ({ type, slides, theme = 'dark' }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const timerRef = React.useRef(null);
+  const pauseTimeoutRef = React.useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
+  const startAutoSlide = React.useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 4000);
-    return () => clearInterval(timer);
   }, [slides.length]);
 
+  // Auto-slide effect — only runs when not paused
+  useEffect(() => {
+    if (!isPaused) {
+      startAutoSlide();
+    }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isPaused, startAutoSlide]);
+
+  // Cleanup pause timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (pauseTimeoutRef.current) clearTimeout(pauseTimeoutRef.current);
+    };
+  }, []);
+
+  const pauseAndResume = () => {
+    // Stop auto-slide immediately
+    if (timerRef.current) clearInterval(timerRef.current);
+    setIsPaused(true);
+    // Clear any existing resume timeout
+    if (pauseTimeoutRef.current) clearTimeout(pauseTimeoutRef.current);
+    // Resume auto-slide after 5 seconds of inactivity
+    pauseTimeoutRef.current = setTimeout(() => {
+      setIsPaused(false);
+    }, 5000);
+  };
+
   const handlePrev = () => {
+    pauseAndResume();
     setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
   const handleNext = () => {
+    pauseAndResume();
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 

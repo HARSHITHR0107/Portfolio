@@ -1,14 +1,271 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 
+/* ─── Pixel Art "OPEN TO WORK" Glyph Badge ─── */
+const PIXEL_GRID = [
+  '..................................................................',
+  '..##...###...####..#..#....#####...##.....#...#...##...###...#..#.',
+  '.#..#..#..#..#.....##.#......#....#..#....#...#..#..#..#..#..#.#..',
+  '.#..#..###...###...####......#....#..#....#.#.#..#..#..###...##...',
+  '.#..#..#.....#.....#.##......#....#..#....##.##..#..#..#.#...#.#..',
+  '..##...#.....####..#..#......#.....##.....#...#...##...#..#..#..#.',
+  '..................................................................',
+];
+
+// Collect all lit pixel positions once
+const LIT_PIXELS = [];
+PIXEL_GRID.forEach((row, r) => {
+  row.split('').forEach((cell, c) => {
+    if (cell === '#') LIT_PIXELS.push(`${r}-${c}`);
+  });
+});
+
+const PixelOpenToWork = () => {
+  const cols = PIXEL_GRID[0].length;
+  const rows = PIXEL_GRID.length;
+
+  // Set of pixel keys currently blinking (briefly off)
+  const [blinkSet, setBlinkSet] = useState(new Set());
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    let timer;
+    const tick = () => {
+      // Pick 30-45 random lit pixels to briefly blink off
+      const newBlinks = new Set();
+      const count = 8 + Math.floor(Math.random() * 7);
+      for (let i = 0; i < count; i++) {
+        const idx = Math.floor(Math.random() * LIT_PIXELS.length);
+        newBlinks.add(LIT_PIXELS[idx]);
+      }
+      setBlinkSet(newBlinks);
+
+      // Turn them back on after a short flash
+      setTimeout(() => setBlinkSet(new Set()), 60 + Math.random() * 40);
+
+      // Randomize next tick interval for organic feel
+      timer = setTimeout(tick, 120 + Math.random() * 130);
+    };
+
+    timer = setTimeout(tick, 150);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="pixel-glyph-container">
+      <div className="pixel-glyph-badge">
+        <div
+          className="pixel-grid"
+          style={{
+            gridTemplateColumns: `repeat(${cols}, 1fr)`,
+            gridTemplateRows: `repeat(${rows}, 1fr)`,
+          }}
+        >
+          {PIXEL_GRID.map((row, r) =>
+            row.split('').map((cell, c) => {
+              const isLit = cell === '#';
+              const key = `${r}-${c}`;
+              const isBlinking = isLit && blinkSet.has(key);
+              const isRedPixel = r === 0 && c === 0;
+              const cellStyle = isRedPixel
+                ? { background: '#e53935' }
+                : isBlinking
+                  ? { opacity: 0.15 }
+                  : undefined;
+              return (
+                <div
+                  key={key}
+                  className={`pixel-cell ${isLit ? 'lit' : ''} ${isRedPixel ? 'red-pixel' : ''}`}
+                  style={cellStyle}
+                />
+              );
+            })
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── Pixel Art Winking Face for About Section ─── */
+const CIRCLE_MASK = [
+  '....#####....',
+  '..#########..',
+  '.###########.',
+  '.###########.',
+  '#############',
+  '#############',
+  '#############',
+  '#############',
+  '#############',
+  '.###########.',
+  '.###########.',
+  '..#########..',
+  '....#####....',
+];
+
+const SMILEY_GRID = [
+  '.............',
+  '.............',
+  '..###...##...',
+  '..###...##...',
+  '..###....#...',
+  '..###........',
+  '.............',
+  '.............',
+  '..#.......#..',
+  '...#.....#...',
+  '....#####....',
+  '.............',
+  '.............',
+];
+
+const SMILEY_LIT = [];
+SMILEY_GRID.forEach((row, r) => {
+  row.split('').forEach((cell, c) => {
+    if (cell === '#' && CIRCLE_MASK[r][c] === '#') SMILEY_LIT.push(`${r}-${c}`);
+  });
+});
+
+const PixelSmiley = () => {
+  const cols = SMILEY_GRID[0].length;
+  const rows = SMILEY_GRID.length;
+  const [blinkSet, setBlinkSet] = useState(new Set());
+
+  useEffect(() => {
+    let timer;
+    const tick = () => {
+      const newBlinks = new Set();
+      const count = 4 + Math.floor(Math.random() * 5);
+      for (let i = 0; i < count; i++) {
+        const idx = Math.floor(Math.random() * SMILEY_LIT.length);
+        newBlinks.add(SMILEY_LIT[idx]);
+      }
+      setBlinkSet(newBlinks);
+      setTimeout(() => setBlinkSet(new Set()), 60 + Math.random() * 40);
+      timer = setTimeout(tick, 150 + Math.random() * 200);
+    };
+    timer = setTimeout(tick, 200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div
+      className="pixel-grid smiley-grid"
+      style={{
+        gridTemplateColumns: `repeat(${cols}, 1fr)`,
+        gridTemplateRows: `repeat(${rows}, 1fr)`,
+      }}
+    >
+      {SMILEY_GRID.map((row, r) =>
+        row.split('').map((cell, c) => {
+          const key = `${r}-${c}`;
+          const isVisible = CIRCLE_MASK[r][c] === '#';
+          if (!isVisible) {
+            return <div key={key} style={{ background: 'transparent' }} />;
+          }
+          const isLit = cell === '#';
+          const isBlinking = isLit && blinkSet.has(key);
+          return (
+            <div
+              key={key}
+              className={`pixel-cell ${isLit ? 'lit' : ''}`}
+              style={isBlinking ? { opacity: 0.15 } : undefined}
+            />
+          );
+        })
+      )}
+    </div>
+  );
+};
+
+/* ─── Scroll-Highlight Word ─── */
+const ScrollHighlightWord = ({ word, index, total, containerRef }) => {
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start 0.9', 'end 0.4'],
+  });
+
+  const wordStart = index / total;
+  const wordEnd = (index + 1) / total;
+  const opacity = useTransform(scrollYProgress, [wordStart, wordEnd], [0.15, 1]);
+
+  return (
+    <>
+      <motion.span style={{ opacity, transition: 'opacity 0.1s ease' }} className="scroll-word">
+        {word}
+      </motion.span>
+      {' '}
+    </>
+  );
+};
+
+const ScrollHighlightText = ({ text }) => {
+  const containerRef = useRef(null);
+  const words = text.trim().split(/\s+/).filter(Boolean);
+
+  return (
+    <p className="scroll-highlight-text" ref={containerRef}>
+      {words.map((word, i) => (
+        <ScrollHighlightWord
+          key={i}
+          word={word}
+          index={i}
+          total={words.length}
+          containerRef={containerRef}
+        />
+      ))}
+    </p>
+  );
+};
+
+/* ─── Experience Item ─── */
+const CertificateItem = ({ year, title, subtitle, description, image }) => {
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <>
+      <div className="blog-item">
+        <div className="blog-meta">{year}</div>
+        <h3>{title}<br /><span style={{ fontSize: '1rem', color: 'var(--text-dim)' }}>{subtitle}</span></h3>
+        <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>{description}</p>
+        {image && (
+          <button className="cert-pill-btn" onClick={() => setShowModal(true)}>
+            View Certificate
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7" />
+              <polyline points="7 7 17 7 17 17" />
+            </svg>
+          </button>
+        )}
+      </div>
+
+      {/* Certificate Modal */}
+      {showModal && (
+        <div className="cert-modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="cert-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="cert-modal-close" onClick={() => setShowModal(false)}>&times;</button>
+            <div className="cert-modal-image-wrapper">
+              <img src={image} alt={title} className="cert-modal-image" />
+              <div className="cert-modal-image-caption">
+                <strong>{title}</strong> &mdash; {subtitle} &middot; {year}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
 const ProjectCard = ({ title, subtitle, bgColor, btnBg, btnColor, fontColor }) => {
   const navigate = useNavigate();
-  
+
   return (
-    <div 
-      className="work-card" 
+    <div
+      className="work-card"
       style={{ backgroundColor: bgColor, color: fontColor, cursor: 'pointer' }}
       onClick={() => navigate(`/project/${encodeURIComponent(title.toLowerCase().replace(/\s+/g, '-'))}`)}
     >
@@ -84,7 +341,7 @@ function Home() {
       <div className="graphic-section-container">
         <div className="graphic-section">
           {/* Decorative Stickers Removed */}
-          
+
           <div className="intro-text-container">
             <h1 className="intro-name">HARSHITH R.</h1>
             <p className="intro-title">A passionate innovator</p>
@@ -117,20 +374,25 @@ function Home() {
             <div className="section-line"></div>
           </div>
           <div className="about-content">
-            <p className="large-text">
-              I am a Full Stack and Mobile App Developer with experience building scalable applications. My focus spans real-time data, authentication, robust backend integrations, and cutting-edge API utilization.
-            </p>
-            <div className="skills-tags">
-              <span>Flutter</span>
-              <span>React Native</span>
-              <span>React.js</span>
-              <span>Node.js</span>
-              <span>Firebase</span>
-              <span>GCP</span>
-              <span>TensorFlow</span>
-              <span>Java</span>
-              <span>Python</span>
-              <span>IoT</span>
+            <div className="about-left">
+              <ScrollHighlightText text="I am a Full Stack and Mobile App Developer with experience building scalable applications. My focus spans real-time data, authentication, robust backend integrations, and cutting-edge API utilization." />
+              <div className="skills-tags">
+                <span>Flutter</span>
+                <span>React Native</span>
+                <span>React.js</span>
+                <span>Node.js</span>
+                <span>Firebase</span>
+                <span>GCP</span>
+                <span>TensorFlow</span>
+                <span>Java</span>
+                <span>Python</span>
+                <span>IoT</span>
+              </div>
+            </div>
+            <div className="about-right">
+              <div className="about-glyph-circle">
+                <PixelSmiley />
+              </div>
             </div>
           </div>
         </section>
@@ -198,37 +460,53 @@ function Home() {
             <div className="section-line"></div>
           </div>
           <div className="blog-list">
-            <div className="blog-item">
-              <div className="blog-meta">2025</div>
-              <h3>Flutter Developer (Freelance) <br /><span style={{ fontSize: '1rem', color: 'var(--text-dim)' }}>Proofbox App | Remote</span></h3>
-              <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>Developed cross-platform mobile application utilizing Firebase and Git-based collaborative workflows.</p>
-            </div>
-            <div className="blog-item">
-              <div className="blog-meta">2024</div>
-              <h3>Hackathon Participant <br /><span style={{ fontSize: '1rem', color: 'var(--text-dim)' }}>Metadome AI</span></h3>
-              <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>Built an AI-powered web app integrating Face-API.js and React.js dynamically adapting explanations based on real-time expression detection.</p>
-            </div>
-            <div className="blog-item">
-              <div className="blog-meta">2026</div>
-              <h3>JPMorgan Job Simulation<br /><span style={{ fontSize: '1rem', color: 'var(--text-dim)' }}>Forage | Certificate</span></h3>
-              <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>Software Engineering Job Simulation focusing on agile frameworks and enterprise development environments.</p>
-            </div>
-            <div className="blog-item">
-              <div className="blog-meta">2026</div>
-              <h3>Building with the Claude API<br /><span style={{ fontSize: '1rem', color: 'var(--text-dim)' }}>Anthropic Education | Certificate</span></h3>
-              <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>Learned to integrate and utilize the Claude API to build robust AI-powered solutions.</p>
-            </div>
-            <div className="blog-item">
-              <div className="blog-meta">2026</div>
-              <h3>Claude Code in Action<br /><span style={{ fontSize: '1rem', color: 'var(--text-dim)' }}>Anthropic Education | Certificate</span></h3>
-              <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>Explored practical, hands-on techniques for real-world software engineering tasks with Claude.</p>
-            </div>
+            <CertificateItem
+              year="2025"
+              title="Flutter Developer (Freelance)"
+              subtitle="Proofbox App | Remote"
+              description="Developed cross-platform mobile application utilizing Firebase and Git-based collaborative workflows."
+            />
+            <CertificateItem
+              year="2024"
+              title="Hackathon Participant"
+              subtitle="Metadome AI"
+              description="Built an AI-powered web app integrating Face-API.js and React.js dynamically adapting explanations based on real-time expression detection."
+              image="/certificates/metadome.png"
+            />
+            <CertificateItem
+              year="2026"
+              title="JPMorgan Job Simulation"
+              subtitle="Forage | Certificate"
+              description="Software Engineering Job Simulation focusing on agile frameworks and enterprise development environments."
+              certColor="#00897b"
+              certTitle="JPMorgan Chase & Co."
+              image="/certificates/jpmorgan.png"
+            />
+            <CertificateItem
+              year="2026"
+              title="Building with the Claude API"
+              subtitle="Anthropic Education | Certificate"
+              description="Learned to integrate and utilize the Claude API to build robust AI-powered solutions."
+              certColor="#d4a056"
+              certTitle="Anthropic Education"
+              image="/certificates/anthropic-claude-api.jpg"
+            />
+            <CertificateItem
+              year="2026"
+              title="Claude Code in Action"
+              subtitle="Anthropic Education | Certificate"
+              description="Explored practical, hands-on techniques for real-world software engineering tasks with Claude."
+              certColor="#7c4dff"
+              certTitle="Anthropic Education"
+              image="/certificates/anthropic-claude-code.jpg"
+            />
           </div>
         </section>
 
         {/* Contact Section */}
         <section id="contact" className="section contact-section">
           <div className="contact-content">
+            <PixelOpenToWork />
             <h2 className="massive-title">LET'S TALK</h2>
             <p>Ready to create something amazing together? Drop me a line.</p>
             <a href="mailto:harshith.r53583@gmail.com" className="email-link">harshith.r53583@gmail.com</a>

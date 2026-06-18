@@ -68,7 +68,7 @@
 .hero-title {
   font-family: var(--font-display);
   font-size: clamp(4rem, 12vw, 15rem);
-  line-height: 0.85;
+  line-height: 1;
   text-transform: uppercase;
   color: var(--bg-light);
   margin: 0;
@@ -481,7 +481,7 @@
   font-size: 3rem;
   text-transform: uppercase;
   margin: 0;
-  letter-spacing: -0.5px;
+  letter-spacing: 2px;
 }
 
 .section-line {
@@ -603,9 +603,50 @@
 /* About Section */
 .about-content {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 3rem;
-  max-width: 800px;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.about-left {
+  flex: 0 0 55%;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.about-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-glyph-circle {
+  width: 350px;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.smiley-grid {
+  width: 100%;
+  height: 100%;
+  gap: 5px;
+}
+
+.smiley-grid .pixel-cell {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  transition: opacity 0.08s ease;
+}
+
+.smiley-grid .pixel-cell.lit {
+  background: #ffffff;
+  border-radius: 4px;
 }
 
 .large-text {
@@ -613,6 +654,22 @@
   line-height: 1.4;
   font-weight: 500;
   letter-spacing: -0.5px;
+}
+
+/* Scroll Highlight Text */
+.scroll-highlight-text {
+  font-size: 2rem;
+  line-height: 1.5;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  margin: 0;
+  white-space: normal;
+}
+
+.scroll-word {
+  display: inline;
+  color: #fff;
+  will-change: opacity;
 }
 
 .skills-tags {
@@ -634,17 +691,133 @@
 .blog-list {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 0;
+  overflow: hidden;
 }
 
 .blog-item {
   display: grid;
-  grid-template-columns: 150px 1fr auto;
+  grid-template-columns: 100px 1fr 1fr auto;
   align-items: center;
   gap: 2rem;
-  padding-bottom: 2rem;
+  padding: 2rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  transition: background 0.3s ease;
 }
+
+
+/* ─── Certificate Pill Button ─── */
+.cert-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.6rem 1.4rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  white-space: nowrap;
+}
+
+.cert-pill-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.cert-pill-btn:active {
+  transform: translateY(0);
+}
+
+/* ─── Certificate Modal ─── */
+.cert-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.cert-modal {
+  position: relative;
+  width: 95%;
+  max-width: 900px;
+  animation: slideUp 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.cert-modal-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+
+.cert-modal-close:hover {
+  opacity: 1;
+}
+
+/* ─── Certificate Image Modal ─── */
+.cert-modal-image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background: #111;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cert-modal-image {
+  width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
+}
+
+.cert-modal-image-caption {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.cert-modal-image-caption strong {
+  color: #fff;
+}
+
 
 .blog-meta {
   color: var(--text-dim);
@@ -688,7 +861,7 @@
   font-family: var(--font-display);
   font-size: clamp(4rem, 10vw, 10rem);
   text-transform: uppercase;
-  line-height: 0.9;
+  line-height: 1;
   letter-spacing: 2px;
 }
 
@@ -1091,6 +1264,17 @@
   align-items: flex-end;
 }
 
+/* Laptop projects: stack vertically */
+.project-hero:has(.project-device-container.laptop) {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: auto;
+  min-height: 100vh;
+  padding: 0 4rem 4rem;
+  gap: 3rem;
+}
+
 .project-device-container {
   position: absolute;
   z-index: 1;
@@ -1100,8 +1284,10 @@
 }
 
 .project-device-container.laptop {
-  right: 2rem;
-  top: 12vh;
+  position: relative;
+  right: auto;
+  top: auto;
+  margin-top: 140px;
 }
 
 .project-device-container.iphone {
@@ -1116,7 +1302,10 @@
 }
 
 .project-text-container.laptop {
-  max-width: 28vw;
+  max-width: 100%;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 0;
 }
 
 .project-text-container.iphone {
@@ -1142,7 +1331,7 @@
 }
 
 .project-text-container.laptop .project-subtitle-container {
-  max-width: 320px;
+  max-width: 600px;
 }
 
 .project-text-container.iphone .project-subtitle-container {
@@ -1232,5 +1421,59 @@
 
   .laptop-screen {
     border-width: 12px;
+  }
+}
+
+/* ─── Pixel Art "OPEN TO WORK" Glyph Badge ─── */
+.pixel-glyph-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.pixel-glyph-badge {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pixel-grid {
+  display: grid;
+  gap: 5px;
+  width: 100%;
+}
+
+.pixel-cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.06);
+  transition: opacity 0.12s ease;
+}
+
+.pixel-cell.lit {
+  background: #00c853;
+  border-radius: 3px;
+}
+
+/* Ambient glow - hidden for minimal look */
+.pixel-glyph-glow {
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pixel-grid {
+    gap: 3px;
+  }
+
+  .pixel-cell {
+    border-radius: 2px;
   }
 }
