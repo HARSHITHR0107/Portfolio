@@ -89,7 +89,22 @@ const PixelOpenToWork = () => {
   );
 };
 
-/* ─── Pixel Art Winking Face for About Section ─── */
+/* ─── Pixel Art Animated Frames for About Section ─── */
+/*
+ * HOW TO ADD YOUR OWN FRAMES:
+ * 1. Each frame is a 13×13 grid of characters inside CIRCLE_MASK.
+ * 2. '#' = lit pixel (white), '.' = dim pixel (dark).
+ * 3. Only pixels where CIRCLE_MASK is also '#' will be visible.
+ * 4. Add a new 13-row string array to the FRAMES array below.
+ * 5. The animation will automatically include your new frame!
+ *
+ * TIP: Use the gen_frames.js script to generate letter grids:
+ *   - Add your letter to the L object (5 wide × 7 tall pattern)
+ *   - Build the text with buildGrid() and padToSize()
+ *   - Run: node gen_frames.js
+ *   - Copy the output into FRAMES below
+ */
+
 const CIRCLE_MASK = [
   '....#####....',
   '..#########..',
@@ -106,6 +121,24 @@ const CIRCLE_MASK = [
   '....#####....',
 ];
 
+// ─── Frame 1: "HI" ───
+const HI_GRID = [
+  '.............',
+  '.............',
+  '.............',
+  '.#...#...###.',
+  '.#...#....#..',
+  '.#...#....#..',
+  '.#####....#..',
+  '.#...#....#..',
+  '.#...#....#..',
+  '.#...#...###.',
+  '.............',
+  '.............',
+  '.............',
+];
+
+// ─── Frame 2: Winking Smiley ───
 const SMILEY_GRID = [
   '.............',
   '.............',
@@ -122,26 +155,90 @@ const SMILEY_GRID = [
   '.............',
 ];
 
-const SMILEY_LIT = [];
-SMILEY_GRID.forEach((row, r) => {
-  row.split('').forEach((cell, c) => {
-    if (cell === '#' && CIRCLE_MASK[r][c] === '#') SMILEY_LIT.push(`${r}-${c}`);
+// ─── Frame 3: "I'M" ───
+const IM_GRID = [
+  '.............',
+  '.............',
+  '.............',
+  '.###.#.#...#.',
+  '..#..#.##.##.',
+  '..#....#.#.#.',
+  '..#....#.#.#.',
+  '..#....#...#.',
+  '..#....#...#.',
+  '.###...#...#.',
+  '.............',
+  '.............',
+  '.............',
+];
+
+/*
+ * ═══════════════════════════════════════════
+ *  ADD YOUR OWN FRAMES HERE!
+ *  Just push another 13×13 grid array.
+ *  Example:
+ *
+ *  const MY_GRID = [
+ *    '.............',
+ *    '.............',
+ *    '.............',
+ *    '..#.#.#.#.#..',
+ *    '..#.......#..',
+ *    '...#.....#...',
+ *    '....#...#....',
+ *    '.....#.#.....',
+ *    '......#......',
+ *    '.............',
+ *    '.............',
+ *    '.............',
+ *    '.............',
+ *  ];
+ *
+ *  Then add MY_GRID to the FRAMES array below.
+ * ═══════════════════════════════════════════
+ */
+
+const FRAMES = [HI_GRID, SMILEY_GRID, IM_GRID];
+
+// Pre-compute lit pixels for each frame (for blink effect)
+const FRAMES_LIT = FRAMES.map(frame => {
+  const lit = [];
+  frame.forEach((row, r) => {
+    row.split('').forEach((cell, c) => {
+      if (cell === '#' && CIRCLE_MASK[r][c] === '#') lit.push(`${r}-${c}`);
+    });
   });
+  return lit;
 });
 
 const PixelSmiley = () => {
-  const cols = SMILEY_GRID[0].length;
-  const rows = SMILEY_GRID.length;
+  const cols = 13;
+  const rows = 13;
+  const [frameIndex, setFrameIndex] = useState(0);
   const [blinkSet, setBlinkSet] = useState(new Set());
 
+  // Cycle through frames
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFrameIndex(prev => (prev + 1) % FRAMES.length);
+    }, 1500); // 1.5 seconds per frame
+    return () => clearInterval(interval);
+  }, []);
+
+  // Blink effect for current frame
   useEffect(() => {
     let timer;
     const tick = () => {
+      const litPixels = FRAMES_LIT[frameIndex];
+      if (litPixels.length === 0) {
+        timer = setTimeout(tick, 200);
+        return;
+      }
       const newBlinks = new Set();
       const count = 4 + Math.floor(Math.random() * 5);
       for (let i = 0; i < count; i++) {
-        const idx = Math.floor(Math.random() * SMILEY_LIT.length);
-        newBlinks.add(SMILEY_LIT[idx]);
+        const idx = Math.floor(Math.random() * litPixels.length);
+        newBlinks.add(litPixels[idx]);
       }
       setBlinkSet(newBlinks);
       setTimeout(() => setBlinkSet(new Set()), 60 + Math.random() * 40);
@@ -149,7 +246,9 @@ const PixelSmiley = () => {
     };
     timer = setTimeout(tick, 200);
     return () => clearTimeout(timer);
-  }, []);
+  }, [frameIndex]);
+
+  const currentFrame = FRAMES[frameIndex];
 
   return (
     <div
@@ -159,7 +258,7 @@ const PixelSmiley = () => {
         gridTemplateRows: `repeat(${rows}, 1fr)`,
       }}
     >
-      {SMILEY_GRID.map((row, r) =>
+      {currentFrame.map((row, r) =>
         row.split('').map((cell, c) => {
           const key = `${r}-${c}`;
           const isVisible = CIRCLE_MASK[r][c] === '#';
@@ -393,6 +492,44 @@ function Home() {
               <div className="about-glyph-circle">
                 <PixelSmiley />
               </div>
+            </div>
+          </div>
+
+          {/* Mobile-only: split layout with semicircles */}
+          <div className="about-mobile-layout">
+            {/* Top semicircle decoration */}
+            <div className="about-mobile-semicircle about-semi-top">
+              <div className="about-mobile-text-top">
+                <ScrollHighlightText text="I am a Full Stack and Mobile App Developer with experience building scalable applications." />
+              </div>
+            </div>
+
+            {/* Centered glyph circle */}
+            <div className="about-mobile-glyph-wrapper">
+              <div className="about-mobile-glyph">
+                <PixelSmiley />
+              </div>
+            </div>
+
+            {/* Bottom semicircle decoration */}
+            <div className="about-mobile-semicircle about-semi-bottom">
+              <div className="about-mobile-text-bottom">
+                <ScrollHighlightText text="My focus spans real-time data, authentication, robust backend integrations, and cutting-edge API utilization." />
+              </div>
+            </div>
+
+            {/* Skills tags for mobile */}
+            <div className="skills-tags about-mobile-skills">
+              <span>Flutter</span>
+              <span>React Native</span>
+              <span>React.js</span>
+              <span>Node.js</span>
+              <span>Firebase</span>
+              <span>GCP</span>
+              <span>TensorFlow</span>
+              <span>Java</span>
+              <span>Python</span>
+              <span>IoT</span>
             </div>
           </div>
         </section>
